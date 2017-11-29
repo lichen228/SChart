@@ -27,4 +27,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+    compile 'com.google.guava:guava:23.5-android'
+    compile 'joda-time:joda-time:2.9.9'
 }

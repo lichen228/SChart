@@ -9,6 +9,8 @@ import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.charts.CombinedChart.DrawOrder;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.CandleData;
@@ -19,6 +21,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 
@@ -37,11 +41,18 @@ public class MainActivity extends AppCompatActivity {
     private void initChart() {
         mChart.setBackgroundColor(Color.WHITE);
         mChart.setDrawOrder(new DrawOrder[]{DrawOrder.LINE, DrawOrder.CANDLE});
+        mChart.setMarker(new MarkerView(getApplicationContext(), R.layout.layout_markview));
+        mChart.setDoubleTapToZoomEnabled(false);
 
         Legend l = mChart.getLegend();
+        l.setTextColor(Color.BLUE);
 
         YAxis leftAxis = mChart.getAxisLeft();
-        leftAxis.setAxisMinimum(0f);
+//        leftAxis.setAxisMinimum(0f);
+        LimitLine limitLine = new LimitLine(65, "最低点");
+        limitLine.setLineColor(Color.GREEN);
+        leftAxis.addLimitLine(limitLine);
+        leftAxis.setDrawLimitLinesBehindData(true);
 
         YAxis rightAxis = mChart.getAxisRight();
         rightAxis.setEnabled(false);
@@ -51,10 +62,13 @@ public class MainActivity extends AppCompatActivity {
         xAxis.setAxisMinimum(0f);
         xAxis.setAxisMaximum(30f);
         xAxis.setGranularity(1f);
+        xAxis.setDrawGridLines(false);
+        xAxis.setAvoidFirstLastClipping(true);
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                return String.valueOf((int) value % 30);
+                DateTime dateTime = new DateTime().minusDays(30 - (int) value);
+                return dateTime.toString("yyyy-MM-dd");
             }
         });
 
@@ -86,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<CandleEntry> list = new ArrayList<>();
         list.add(new CandleEntry(1, 90, 70, 80, 75));
         list.add(new CandleEntry(6, 88, 75, 80, 75));
-        list.add(new CandleEntry(11, 80, 70, 80, 75));
+        list.add(new CandleEntry(11, 80, 65, 80, 75));
         list.add(new CandleEntry(16, 90, 70, 70, 85));
         CandleDataSet set = new CandleDataSet(list, "Candle DataSet");
         set.setIncreasingColor(Color.RED);
